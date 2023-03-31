@@ -125,6 +125,9 @@ type UserInfo struct {
 	Status     AccountStatus `json:"status"`
 	MemberOf   []string      `json:"memberOf,omitempty"`
 	UpdatedAt  time.Time     `json:"updatedAt,omitempty"`
+
+	MappedSysUser  string `json:"sysUser,omitempty"`
+	MappedSysGroup string `json:"sysGroup,omitempty"`
 }
 
 // RemoveUser - remove a user.
@@ -222,13 +225,19 @@ func (adm *AdminClient) GetUserInfo(ctx context.Context, name string) (u UserInf
 type AddOrUpdateUserReq struct {
 	SecretKey string        `json:"secretKey,omitempty"`
 	Status    AccountStatus `json:"status"`
+
+	MappedSysUser  string `json:"sysUser,omitempty"`
+	MappedSysGroup string `json:"sysGroup,omitempty"`
 }
 
 // SetUser - update user secret key or account status.
-func (adm *AdminClient) SetUser(ctx context.Context, accessKey, secretKey string, status AccountStatus) error {
+func (adm *AdminClient) SetUser(ctx context.Context, accessKey, secretKey, sysUser, sysGroup string, status AccountStatus) error {
 	data, err := json.Marshal(AddOrUpdateUserReq{
 		SecretKey: secretKey,
 		Status:    status,
+
+		MappedSysUser:  sysUser,
+		MappedSysGroup: sysGroup,
 	})
 	if err != nil {
 		return err
@@ -263,8 +272,8 @@ func (adm *AdminClient) SetUser(ctx context.Context, accessKey, secretKey string
 }
 
 // AddUser - adds a user.
-func (adm *AdminClient) AddUser(ctx context.Context, accessKey, secretKey string) error {
-	return adm.SetUser(ctx, accessKey, secretKey, AccountEnabled)
+func (adm *AdminClient) AddUser(ctx context.Context, accessKey, secretKey, sysUser, sysGroup string) error {
+	return adm.SetUser(ctx, accessKey, secretKey, sysUser, sysGroup, AccountEnabled)
 }
 
 // SetUserStatus - adds a status for a user.

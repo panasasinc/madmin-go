@@ -105,7 +105,7 @@ func (adm *AdminClient) GetGroupDescription(ctx context.Context, group string) (
 }
 
 // ListGroups - lists all groups names present on the server.
-func (adm *AdminClient) ListGroups(ctx context.Context) ([]string, error) {
+func (adm *AdminClient) ListGroups(ctx context.Context) (map[string]GroupDesc, error) {
 	reqData := requestData{
 		relPath: adminAPIPrefix + "/groups",
 	}
@@ -125,7 +125,7 @@ func (adm *AdminClient) ListGroups(ctx context.Context) ([]string, error) {
 		return nil, err
 	}
 
-	groups := []string{}
+	groups := make(map[string]GroupDesc)
 	if err = json.Unmarshal(data, &groups); err != nil {
 		return nil, err
 	}
